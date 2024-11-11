@@ -17,8 +17,10 @@ import com.springboot.banking_system.dto.ResponseMessageDto;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
 import com.springboot.banking_system.model.Customer;
+import com.springboot.banking_system.model.User;
 import com.springboot.banking_system.service.AccountService;
 import com.springboot.banking_system.service.CustomerService;
+import com.springboot.banking_system.service.UserService;
 
 @RestController
 public class CustomerController {
@@ -27,13 +29,27 @@ public class CustomerController {
 	private CustomerService customerService;
 	
 	@Autowired
+	private UserService userService;
+	
+	
+	@Autowired
 	private AccountService accountService;
 	
-	@PostMapping("/customer/register")
-	public Customer registerCustomer(@RequestBody Customer customer) {
+	@PostMapping("/customer/register/{uid}")
+	public ResponseEntity<?> registerCustomer(@PathVariable int uid,@RequestBody Customer customer,ResponseMessageDto dto) {
 		// its used to insert the customer details i.e. to register customer
+		User user = null;
+		try {
+			user = userService.validate(uid);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+			}
 		
-		return customerService.insert(customer);	
+		customer.setUser(user);
+		 customer =  customerService.insert(customer);	
+		 return ResponseEntity.ok(customer);
+		 
 	}
 	
 	@PutMapping("/customer/update/{id}")

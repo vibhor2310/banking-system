@@ -1,27 +1,46 @@
 package com.springboot.banking_system.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.springboot.banking_system.enums.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-public class User {
+@Table(name = "user_info")
+public class User implements UserDetails{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(unique = true)
+	@Column(nullable = false)
 	private String username;
 	
-	@Column(unique = true)
-	private String email;
-	
+	@Column(nullable = false)
 	private String password;
 	
-	private String role;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 	
+	private boolean enabled =true;
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -38,14 +57,6 @@ public class User {
 		this.username = username;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -54,12 +65,42 @@ public class User {
 		this.password = password;
 	}
 
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
+	}
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
+		List<GrantedAuthority> list = new ArrayList<>();
+		list.add(authority);
+		return list;}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return enabled;
 	}
 
 	
