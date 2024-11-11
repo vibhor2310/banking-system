@@ -1,5 +1,6 @@
 package com.springboot.banking_system.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,5 +45,10 @@ public class AccountService {
 
 	        return accountNumber;
 	    }
+
+
+	public List<Account> getAccountDetails(int cid) {
+		return accountRepository.getAccountDetails(cid);
+	}
 
 }

@@ -114,7 +114,7 @@ public class CustomerController {
 		customer = customerService.validate(cid);
 	} catch (ResourceNotFoundException e) {
 		dto.setMsg(e.getMessage());
-		ResponseEntity.badRequest().body(dto);
+		return ResponseEntity.badRequest().body(dto);
 	}
 	account.setCustomer(customer);
 	account.setAccountType(accountDet.getAccountType());
@@ -126,13 +126,22 @@ public class CustomerController {
 	
 //	System.out.println(account);
 	account = accountService.insert(account);
-	return ResponseEntity.ok(account);
+	return ResponseEntity.ok(account);	
+	}
 	
 	
-	
-	
-	
+	@GetMapping("/customer/account/details/{cid}")
+	public ResponseEntity<?> getAccountDetails(@PathVariable int cid,ResponseMessageDto dto) {
 		
+		try {
+			customerService.validate(cid);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+		
+		List<Account> list = accountService.getAccountDetails(cid);
+		return ResponseEntity.ok(list);
 		
 	}
 	
@@ -180,39 +189,3 @@ public class CustomerController {
 
 
 
-
-//to get customer details
-//	@GetMapping("/customer/fetch")
-//	public List<Customer> getAllCustomers(){
-//		List<Customer> list = customerService.getAllPolicy();
-//		return list;
-//		
-//		
-//	}
-//		
-//		
-////		
-////	@PostMapping("/customer/add-account/{customerId}")
-////public ResponseEntity<?> addAccount(@PathVariable int customerId,@RequestBody Account account,ResponseMessageDto dto) {
-////	// validate customerId first
-////	
-////	Customer customer = null;
-////	
-////	try {
-////		customerService.validate(customerId);
-////	} catch (ResourceNotFoundException e) {
-////		dto.setMsg(e.getMessage());
-////		ResponseEntity.badRequest().body(dto);
-////	}
-////	account.setAccountNumber(generateAccountNumber());
-////	account.setAccountType(account.getAccountType());
-////	account.setBalance(account.getBalance());
-////	account.setDateCreated(account.getDateCreated());
-////	account.setIfscCode(account.getIfscCode());
-////	account.setStatus(account.getStatus());
-////	
-////	account.insert()
-////	
-////	
-////	return null;
-////	}

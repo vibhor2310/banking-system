@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.springboot.banking_system.exception.ResourceNotFoundException;
+import com.springboot.banking_system.model.Account;
 import com.springboot.banking_system.model.Customer;
 import com.springboot.banking_system.repository.CustomerRepository;
 
