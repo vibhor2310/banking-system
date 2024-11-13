@@ -17,9 +17,12 @@ import com.springboot.banking_system.dto.ResponseMessageDto;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
 import com.springboot.banking_system.model.Customer;
+import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.model.User;
 import com.springboot.banking_system.service.AccountService;
 import com.springboot.banking_system.service.CustomerService;
+import com.springboot.banking_system.service.TransactionService;
+//import com.springboot.banking_system.service.TransactionService;
 import com.springboot.banking_system.service.UserService;
 
 @RestController
@@ -34,6 +37,11 @@ public class CustomerController {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private TransactionService transactionService;
+	
+//	private TransactionService transactionService;
 	
 	@PostMapping("/customer/register/{uid}")
 	public ResponseEntity<?> registerCustomer(@PathVariable int uid,@RequestBody Customer customer,ResponseMessageDto dto) {
@@ -160,6 +168,70 @@ public class CustomerController {
 		return ResponseEntity.ok(list);
 		
 	}
+	
+	
+	// transactions ops;
+	
+	// to deposit money
+	@PostMapping("/account/deposit/{aid}/{amount}")
+	public ResponseEntity<?> depositMoney(@PathVariable int aid,@PathVariable double amount,ResponseMessageDto dto) {
+		
+		// validate account id;
+		Account account= null;
+		     try {
+				account = accountService.validateIdAndAmount(aid,amount);
+			} catch (ResourceNotFoundException e) {
+				dto.setMsg(e.getMessage());
+				return ResponseEntity.badRequest().body(dto);
+			} 
+		    
+		     
+		     Transaction transaction = transactionService.depositMoney(aid,amount);
+		     return ResponseEntity.ok(transaction);
+		
+		
+	}
+	
+	// to withdraw money
+	@PostMapping("/account/withdraw/{aid}/{amount}")
+	public ResponseEntity<?> withdrawMoney(@PathVariable int aid,@PathVariable double amount,ResponseMessageDto dto) {
+		
+		// validate account id;
+		Account account= null;
+		     try {
+				account = accountService.validateIdAndAmount(aid,amount);
+			} catch (ResourceNotFoundException e) {
+				dto.setMsg(e.getMessage());
+				return ResponseEntity.badRequest().body(dto);
+			} 
+		    
+		     
+		     Transaction transaction = transactionService.withdrawMoney(aid,amount);
+		     return ResponseEntity.ok(transaction);
+		
+		
+	}
+	
+	// to transfer money;
+	@PostMapping("/account/transfer/{aid}/{reaccno}/{amount}")
+	public ResponseEntity<?> transferMoney(@PathVariable int aid,@PathVariable String reaccno,@PathVariable double amount,ResponseMessageDto dto) {
+		// validate account id;
+		Account account= null;
+			 try {
+				 account = accountService.validateIdAndAmountAndBalance(aid,amount,reaccno);
+			} catch (ResourceNotFoundException e) {
+				dto.setMsg(e.getMessage());
+				return ResponseEntity.badRequest().body(dto);
+			} 
+			 System.out.println(reaccno);
+			 Transaction transaction = transactionService.transferMoney(aid,reaccno,amount);
+			
+			 return ResponseEntity.ok(transaction);
+	}
+	
+	
+	
+	
 	
 	
 	
