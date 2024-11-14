@@ -3,7 +3,7 @@ package com.springboot.banking_system.model;
 
 import java.time.LocalDate;
 
-
+import com.springboot.banking_system.enums.InvestmentStatus;
 import com.springboot.banking_system.enums.Type;
 
 import jakarta.persistence.Column;
@@ -13,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 
@@ -25,8 +26,8 @@ public class Investment {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(nullable =false)
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private InvestmentStatus status;
 	
 	@Column(nullable =false)
 	private LocalDate purchase_date;
@@ -34,7 +35,7 @@ public class Investment {
 	@Enumerated(EnumType.STRING)
 	private Type type;
 	
-	@OneToMany
+	@ManyToOne
 	private Account account;
 
 	public int getId() {
@@ -45,13 +46,7 @@ public class Investment {
 		this.id = id;
 	}
 
-	public String getStatus() {
-		return status;
-	}
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
 
 	public LocalDate getPurchase_date() {
 		return purchase_date;
@@ -75,5 +70,14 @@ public class Investment {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+
+	public InvestmentStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(InvestmentStatus status) {
+		this.status = status;
 	}
 }

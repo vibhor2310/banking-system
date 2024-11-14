@@ -1,9 +1,11 @@
 package com.springboot.banking_system.controller;
 
+import com.springboot.banking_system.dto.ResponseMessageDto;
+import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Admin;
 import com.springboot.banking_system.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,53 +13,64 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/admins")
 public class AdminController {
 
-    private final AdminService adminService;
-
-    @Autowired
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
-    }
-
-    
-    @GetMapping
-    public ResponseEntity<List<Admin>> getAllAdmins() {
-        List<Admin> admins = adminService.getAllAdmins();
-        return new ResponseEntity<>(admins, HttpStatus.OK);
-    }
-
- 
-    @GetMapping("/{id}")
-    public ResponseEntity<Admin> getAdminById(@PathVariable int id) {
-        Optional<Admin> admin = adminService.getAdminById(id);
-        return admin.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
+	@Autowired
+	private AdminService adminService;
+	
+	
+	@PostMapping("/admin/add")
+	public void addAdmin(@RequestBody Admin admin) {
+		adminService.insert(admin);
+	}
+	
+	@GetMapping("/admin/all")
+	public List<Admin> getAllAdmin() {
+		List<Admin> list = adminService.getAllAdmin();
+		return list;
+	}
+	
+	@DeleteMapping("/admin/delete/{id}")
+	public ResponseEntity<?> deleteAdmin(@PathVariable int id, ResponseMessageDto dto) {
+		//validate id
+		try {
+			adminService.validate(id);
+			adminService.delete(id);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+		dto.setMsg("admin deleted");
+		return ResponseEntity.ok(dto);
+		
+	}
+	
+	@PostMapping("/admin/batch/add")
+	public List <Admin> batchInsert(@RequestBody List<Admin> list) {
+		return adminService.insertInBatch(list);
+	}
+	
+	
+	@PutMapping("/admin/update/{id}")
+	public ResponseEntity<?> updateAdmin(@PathVariable int id,@RequestBody Admin newAdmin, ResponseMessageDto dto) {
+	
+	try {
+		Admin existingAdminDb= adminService.validate(id);
+		if(newAdmin.getFirst_name()!=null)
+			existingAdminDb.setFirst_name(newAdmin.getFirst_name());
+		if(newAdmin.getMiddle_name()!=null)
+			existingAdminDb.setMiddle_name(newAdmin.getMiddle_name());
+		if(newAdmin.getLast_name()!=null)
+			existingAdminDb.setLast_name(newAdmin.getLast_name());
+		
+		//re enter this existing admin having new updated value
+		existingAdminDb = adminService.insert(existingAdminDb);
+		return ResponseEntity.ok(existingAdminDb);
+		
+	} catch (ResourceNotFoundException e) {
+		dto.setMsg(e.getMessage());
+		return ResponseEntity.badRequest().body(dto);
+	}
+	}
    
-    @PostMapping
-    public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
-        Admin savedAdmin = adminService.createAdmin(admin);
-        return new ResponseEntity<>(savedAdmin, HttpStatus.CREATED);
-    }
-
- 
-    @PutMapping("/{id}")
-    public ResponseEntity<Admin> updateAdmin(@PathVariable int id, @RequestBody Admin adminDetails) {
-        Optional<Admin> updatedAdmin = adminService.updateAdmin(id, adminDetails);
-        return updatedAdmin.map(admin -> new ResponseEntity<>(admin, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAdmin(@PathVariable int id) {
-        if (adminService.deleteAdmin(id)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
 }

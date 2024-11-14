@@ -7,7 +7,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
+import com.springboot.banking_system.model.Admin;
 import com.springboot.banking_system.model.Customer;
 import com.springboot.banking_system.repository.AccountRepository;
 import com.springboot.banking_system.repository.CustomerRepository;
@@ -49,6 +51,16 @@ public class AccountService {
 
 	public List<Account> getAccountDetails(int cid) {
 		return accountRepository.getAccountDetails(cid);
+	}
+	
+
+	public Account validate(int accountId) throws ResourceNotFoundException {
+		Optional<Account> optional = accountRepository.findById(accountId);
+		if(optional.isEmpty())
+			throw new ResourceNotFoundException("Admin id invalid");
+		
+		Account account = optional.get();
+		return account;
 	}
 
 }
