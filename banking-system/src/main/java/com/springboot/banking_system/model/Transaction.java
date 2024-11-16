@@ -2,8 +2,12 @@ package com.springboot.banking_system.model;
 
 import java.time.LocalDate;
 
+import com.springboot.banking_system.enums.TransactionType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,20 +20,20 @@ public class Transaction {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(nullable = false,unique = true)
+	@Column(nullable = false)
 	private String accountNumber;
 	
 	@Column(nullable = false)
-	private String TransactionType;
+	@Enumerated(EnumType.STRING)
+	private TransactionType TransactionType;
 	
-	private LocalDate TransactionDate;
+	private LocalDate TransactionDate=LocalDate.now();
 	
-	@Column(length = 1000)
-	private String description;
 	
-    private double debit;
+	private double amount;
 	
-	private double credit;
+	
+
 	
 	@ManyToOne
 	private Account account;
@@ -50,11 +54,13 @@ public class Transaction {
 		this.accountNumber = accountNumber;
 	}
 
-	public String getTransactionType() {
+	
+
+	public TransactionType getTransactionType() {
 		return TransactionType;
 	}
 
-	public void setTransactionType(String transactionType) {
+	public void setTransactionType(TransactionType transactionType) {
 		TransactionType = transactionType;
 	}
 
@@ -66,28 +72,14 @@ public class Transaction {
 		TransactionDate = transactionDate;
 	}
 
-	public String getDescription() {
-		return description;
+	
+
+	public double getAmount() {
+		return amount;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public double getDebit() {
-		return debit;
-	}
-
-	public void setDebit(double debit) {
-		this.debit = debit;
-	}
-
-	public double getCredit() {
-		return credit;
-	}
-
-	public void setCredit(double credit) {
-		this.credit = credit;
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 
 	public Account getAccount() {

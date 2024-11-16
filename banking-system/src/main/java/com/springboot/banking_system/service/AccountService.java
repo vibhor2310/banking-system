@@ -37,7 +37,7 @@ public class AccountService {
 		
 	}
 	
-	
+
 	 private String generateUniqueAccountNumber() {
 	        String accountNumber;
 	        do {
@@ -47,7 +47,7 @@ public class AccountService {
 
 	        return accountNumber;
 	    }
-
+	 
 
 	public List<Account> getAccountDetails(int cid) {
 		return accountRepository.getAccountDetails(cid);
@@ -62,5 +62,47 @@ public class AccountService {
 		Account account = optional.get();
 		return account;
 	}
+
+
+	public Account validateIdAndAmount(int aid,double amount) throws ResourceNotFoundException {
+		
+		Optional<Account>optional = accountRepository.findById(aid);
+
+		if(optional.isEmpty()) {
+			throw new ResourceNotFoundException("Given id is invalid try again...");
+		}
+		if(amount<=0)
+			throw new ResourceNotFoundException("Amount cannot be negative or zero");
+		
+		Account account = optional.get();
+		
+		return account;
+		
+	}
+	
+public Account validateIdAndAmountAndBalance(int aid,double amount,String reaccno) throws ResourceNotFoundException {
+		
+		Optional<Account>optional = accountRepository.findById(aid);
+		
+		List<Account>list = accountRepository.findByAccountNumber(reaccno);
+
+		if(optional.isEmpty()||list.isEmpty()) {
+			throw new ResourceNotFoundException("Given id is invalid try again...");
+		}
+		if(amount<=0)
+			throw new ResourceNotFoundException("Amount cannot be negative or zero");
+		
+		
+		Account account = optional.get();
+		
+		double balance = account.getBalance();
+		
+		if(balance<amount)
+			throw new ResourceNotFoundException("Insufficient Balance...");
+		
+		return account;
+		
+	}
+
 
 }

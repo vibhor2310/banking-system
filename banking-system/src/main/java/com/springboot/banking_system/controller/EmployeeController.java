@@ -1,6 +1,5 @@
 package com.springboot.banking_system.controller;
-import java.time.LocalDate;
-import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import com.springboot.banking_system.dto.ResponseMessageDto;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
@@ -18,6 +18,7 @@ import com.springboot.banking_system.service.AccountService;
 import com.springboot.banking_system.service.CustomerService;
 import com.springboot.banking_system.service.EmployeeService;
 import com.springboot.banking_system.service.UserService;
+
 public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
@@ -62,7 +63,7 @@ public class EmployeeController {
 			if(newEmployee.getLastName()!=null) 
 				existingEmployeeDb.setLastName(newEmployee.getLastName());
 			
-			
+
 			//re save this existing customer having new updated value 
 			existingEmployeeDb = employeeService.insert(existingEmployeeDb);
 			return ResponseEntity.ok(existingEmployeeDb);
@@ -113,4 +114,4 @@ public class EmployeeController {
 		return ResponseEntity.ok(list);
 		
 	}
-}
+
