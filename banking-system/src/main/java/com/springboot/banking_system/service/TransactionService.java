@@ -57,7 +57,7 @@ public class TransactionService {
 		String receiverAccount = reaccno;
 		
 		accountRepository.withdraw(senderAccount, amount);
-//		accountRepository.deposit(receiverAccount, amount);
+		accountRepository.deposit(receiverAccount, amount);
 		
 		Transaction transaction = new Transaction();
 		transaction.setAccountNumber(senderAccount);

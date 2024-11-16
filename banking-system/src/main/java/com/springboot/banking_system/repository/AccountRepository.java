@@ -30,7 +30,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
     @Query("update Account a SET a.balance = a.balance-?2 where a.id = ?1")
 	void withdrawMoney(int aid, double amount);
 
-	List<Account> findByAccountNumber(String accountNumber);
+	Account findByAccountNumber(String accountNumber);
 
 	@Modifying
     @Transactional

@@ -17,10 +17,12 @@ import com.springboot.banking_system.dto.ResponseMessageDto;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
 import com.springboot.banking_system.model.Customer;
+import com.springboot.banking_system.model.Loan;
 import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.model.User;
 import com.springboot.banking_system.service.AccountService;
 import com.springboot.banking_system.service.CustomerService;
+import com.springboot.banking_system.service.LoanService;
 import com.springboot.banking_system.service.TransactionService;
 //import com.springboot.banking_system.service.TransactionService;
 import com.springboot.banking_system.service.UserService;
@@ -41,7 +43,8 @@ public class CustomerController {
 	@Autowired
 	private TransactionService transactionService;
 	
-//	private TransactionService transactionService;
+	@Autowired
+	private LoanService loanService;
 	
 	@PostMapping("/customer/register/{uid}")
 	public ResponseEntity<?> registerCustomer(@PathVariable int uid,@RequestBody Customer customer,ResponseMessageDto dto) {
@@ -125,6 +128,10 @@ public class CustomerController {
 	}
 	
 	
+
+	
+	
+	
 	
 	// account - Ops;
 	
@@ -148,8 +155,9 @@ public class CustomerController {
 	account.setAadharNumber(accountDet.getAadharNumber());
 	account.setPanNumber(accountDet.getPanNumber());
 	
-//	System.out.println(account);
+//	System.out.println(account.getAadharNumber());
 	account = accountService.insert(account);
+//	System.out.println(account.getAadharNumber());
 	return ResponseEntity.ok(account);	
 	}
 	
@@ -169,11 +177,35 @@ public class CustomerController {
 		
 	}
 	
+	@PutMapping("/customer/account/update/{aid}")
+	public ResponseEntity<?> updateCustomerAccount(@PathVariable int aid,@RequestBody Account newAccount ,ResponseMessageDto dto) {
+		
+		// validate id
+		try {
+			Account existingAccountDb = accountService.validate(aid);
+			if(newAccount.getAadharNumber()!=null)
+				existingAccountDb.setAadharNumber(newAccount.getAadharNumber());
+			if(newAccount.getPanNumber()!=null)
+				existingAccountDb.setPanNumber(newAccount.getPanNumber());
+			
+
+			//re save this existing customer having new updated value 
+			existingAccountDb = accountService.insertUpdatedData(existingAccountDb);
+			return ResponseEntity.ok(existingAccountDb);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+		
+			
+	}
+	
+	
 	
 	// transactions ops;
 	
 	// to deposit money
-	@PostMapping("/account/deposit/{aid}/{amount}")
+	@PostMapping("/customer/account/deposit/{aid}/{amount}")
 	public ResponseEntity<?> depositMoney(@PathVariable int aid,@PathVariable double amount,ResponseMessageDto dto) {
 		
 		// validate account id;
@@ -193,7 +225,7 @@ public class CustomerController {
 	}
 	
 	// to withdraw money
-	@PostMapping("/account/withdraw/{aid}/{amount}")
+	@PostMapping("/customer/account/withdraw/{aid}/{amount}")
 	public ResponseEntity<?> withdrawMoney(@PathVariable int aid,@PathVariable double amount,ResponseMessageDto dto) {
 		
 		// validate account id;
@@ -213,7 +245,7 @@ public class CustomerController {
 	}
 	
 	// to transfer money;
-	@PostMapping("/account/transfer/{aid}/{reaccno}/{amount}")
+	@PostMapping("/customer/account/transfer/{aid}/{reaccno}/{amount}")
 	public ResponseEntity<?> transferMoney(@PathVariable int aid,@PathVariable String reaccno,@PathVariable double amount,ResponseMessageDto dto) {
 		// validate account id;
 		Account account= null;
@@ -223,10 +255,73 @@ public class CustomerController {
 				dto.setMsg(e.getMessage());
 				return ResponseEntity.badRequest().body(dto);
 			} 
-			 System.out.println(reaccno);
+//			 System.out.println(reaccno);
 			 Transaction transaction = transactionService.transferMoney(aid,reaccno,amount);
 			
 			 return ResponseEntity.ok(transaction);
+	}
+	
+	
+	@GetMapping("/customer/account/transaction/{aid}")
+	public ResponseEntity<?> getTransactionHistory(@PathVariable int aid,ResponseMessageDto dto) {
+
+		try {
+			accountService.validate(aid);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+		
+		List<Transaction> list = accountService.getTransactionHistory(aid);
+		return ResponseEntity.ok(list);
+		
+		
+	}
+	
+	public void getAccountStatement() {
+		
+	}
+	
+	// loan ops
+	
+	@PostMapping("/customer/account/loan/add/{aid}")
+	public ResponseEntity<?> addLoan(@PathVariable int aid,@RequestBody Loan loanDet ,Loan loan,ResponseMessageDto dto) {
+		// validate account id first;
+		Account account = null;
+	
+	try {
+		account = accountService.validate(aid);
+	} catch (ResourceNotFoundException e) {
+		dto.setMsg(e.getMessage());
+		return ResponseEntity.badRequest().body(dto);
+	}
+	loan.setLoanType(loanDet.getLoanType());
+	loan.setPurpose(loanDet.getPurpose());
+	loan.setAmount(loanDet.getAmount());
+	loan.setStatus("Not Aprroved");
+	loan.setAccount(account);
+	
+	loan = loanService.insert(loan);
+	return ResponseEntity.ok(loan);
+	
+	
+	
+		
+	}
+	
+	@GetMapping("/customer/account/loan/detail/{aid}")
+	public ResponseEntity<?> getLoanDetails(@PathVariable int aid,ResponseMessageDto dto) {
+		
+		try {
+			accountService.validate(aid);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+		
+		List<Loan> list = loanService.getLoanDetails(aid);
+		return ResponseEntity.ok(list);
+		
 	}
 	
 	

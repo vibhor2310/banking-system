@@ -45,7 +45,7 @@ public class Customer {
 	
 	private String status="NotApproved";
 	
-	 @Column(nullable = false)
+	 @Column(unique = true,nullable = false)
 	 private String email;
 	
 	@OneToOne

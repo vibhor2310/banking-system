@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
 import com.springboot.banking_system.model.Customer;
+import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.repository.AccountRepository;
 import com.springboot.banking_system.repository.CustomerRepository;
+import com.springboot.banking_system.repository.TransactionRepository;
+
 
 @Service
 public class AccountService {
@@ -21,6 +24,9 @@ public class AccountService {
 	
 	@Autowired
 	private CustomerRepository customerRepository;
+	
+	@Autowired
+	private TransactionRepository transactionRepository;
 
 	public Account insert(Account account) {
 		account.setAccountNumber(generateUniqueAccountNumber());
@@ -65,6 +71,9 @@ public class AccountService {
 		
 		Account account = optional.get();
 		
+		if(account.getStatus().equalsIgnoreCase("Not Approved"))
+			throw new ResourceNotFoundException("Account is not approved yet...");
+		
 		return account;
 		
 	}
@@ -73,9 +82,9 @@ public Account validateIdAndAmountAndBalance(int aid,double amount,String reaccn
 		
 		Optional<Account>optional = accountRepository.findById(aid);
 		
-		List<Account>list = accountRepository.findByAccountNumber(reaccno);
+		Account acc= accountRepository.findByAccountNumber(reaccno);
 
-		if(optional.isEmpty()||list.isEmpty()) {
+		if(optional.isEmpty()||acc==null) {
 			throw new ResourceNotFoundException("Given id is invalid try again...");
 		}
 		if(amount<=0)
@@ -89,9 +98,38 @@ public Account validateIdAndAmountAndBalance(int aid,double amount,String reaccn
 		if(balance<amount)
 			throw new ResourceNotFoundException("Insufficient Balance...");
 		
+		if(account.getStatus().equalsIgnoreCase("Not Approved"))
+			throw new ResourceNotFoundException("Account is not approved yet...");
+		
 		return account;
 		
 	}
+
+
+   public Account validate(int aid) throws ResourceNotFoundException {
+	Optional<Account>optional = accountRepository.findById(aid);
+
+	if(optional.isEmpty()) {
+		throw new ResourceNotFoundException("Given id is invalid try again...");
+	}
+	
+	Account account = optional.get();
+	
+	if(account.getStatus().equalsIgnoreCase("Not Approved"));
+		
+	
+	return account;
+}
+
+
+   public Account insertUpdatedData(Account account) {
+	return accountRepository.save(account);
+}
+
+
+   public List<Transaction> getTransactionHistory(int aid) {
+	return transactionRepository.getTransactionHistory(aid);
+  }
 
 
 }

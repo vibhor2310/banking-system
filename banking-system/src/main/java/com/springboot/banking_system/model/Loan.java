@@ -2,8 +2,12 @@ package com.springboot.banking_system.model;
 
 import java.time.LocalDate;
 
+import com.springboot.banking_system.enums.LoanType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,21 +23,18 @@ public class Loan {
 	@Column(length=1000)
 	private String purpose;
 	
-    private LocalDate applicationDate;
-	
-	private String applicationStatus;
-	
-	private String loanStatus;
-	
-	private LocalDate approvedDate;
-	
-	private LocalDate disbursementDate;
-	
-	private LocalDate closedDate;
+   @Enumerated(EnumType.STRING)
+   private LoanType LoanType;
+   
+   private double amount;
+   
+   private LocalDate dateCreated= LocalDate.now();
+   
+   private String status;
 	
 	@ManyToOne
 	private Account account;
-	
+
 	public int getId() {
 		return id;
 	}
@@ -50,52 +51,36 @@ public class Loan {
 		this.purpose = purpose;
 	}
 
-	public LocalDate getApplicationDate() {
-		return applicationDate;
+	public LoanType getLoanType() {
+		return LoanType;
 	}
 
-	public void setApplicationDate(LocalDate applicationDate) {
-		this.applicationDate = applicationDate;
+	public void setLoanType(LoanType loanType) {
+		LoanType = loanType;
 	}
 
-	public String getApplicationStatus() {
-		return applicationStatus;
+	public double getAmount() {
+		return amount;
 	}
 
-	public void setApplicationStatus(String applicationStatus) {
-		this.applicationStatus = applicationStatus;
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 
-	public String getLoanStatus() {
-		return loanStatus;
+	public LocalDate getDateCreated() {
+		return dateCreated;
 	}
 
-	public void setLoanStatus(String loanStatus) {
-		this.loanStatus = loanStatus;
+	public void setDateCreated(LocalDate dateCreated) {
+		this.dateCreated = dateCreated;
 	}
 
-	public LocalDate getApprovedDate() {
-		return approvedDate;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setApprovedDate(LocalDate approvedDate) {
-		this.approvedDate = approvedDate;
-	}
-
-	public LocalDate getDisbursementDate() {
-		return disbursementDate;
-	}
-
-	public void setDisbursementDate(LocalDate disbursementDate) {
-		this.disbursementDate = disbursementDate;
-	}
-
-	public LocalDate getClosedDate() {
-		return closedDate;
-	}
-
-	public void setClosedDate(LocalDate closedDate) {
-		this.closedDate = closedDate;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Account getAccount() {
@@ -105,6 +90,8 @@ public class Loan {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
+	
+	
 
 	
 	
