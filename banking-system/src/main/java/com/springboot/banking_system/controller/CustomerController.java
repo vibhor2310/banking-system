@@ -13,14 +13,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.banking_system.dto.AccountStatementDto;
 import com.springboot.banking_system.dto.ResponseMessageDto;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
+import com.springboot.banking_system.model.Card;
 import com.springboot.banking_system.model.Customer;
 import com.springboot.banking_system.model.Loan;
 import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.model.User;
 import com.springboot.banking_system.service.AccountService;
+import com.springboot.banking_system.service.CardService;
 import com.springboot.banking_system.service.CustomerService;
 import com.springboot.banking_system.service.LoanService;
 import com.springboot.banking_system.service.TransactionService;
@@ -45,6 +48,10 @@ public class CustomerController {
 	
 	@Autowired
 	private LoanService loanService;
+	
+	@Autowired
+	private CardService cardService;
+	
 	
 	@PostMapping("/customer/register/{uid}")
 	public ResponseEntity<?> registerCustomer(@PathVariable int uid,@RequestBody Customer customer,ResponseMessageDto dto) {
@@ -278,9 +285,6 @@ public class CustomerController {
 		
 	}
 	
-	public void getAccountStatement() {
-		
-	}
 	
 	// loan ops
 	
@@ -320,6 +324,52 @@ public class CustomerController {
 		}
 		
 		List<Loan> list = loanService.getLoanDetails(aid);
+		return ResponseEntity.ok(list);
+		
+	}
+	
+	
+	//  card ops
+	
+	@PostMapping("/customer/account/card/add/{aid}")
+	public ResponseEntity<?> addcard(@PathVariable int aid,@RequestBody Card cardDet ,Card card,ResponseMessageDto dto) {
+		// validate account id first;
+		Account account = null;
+	
+	try {
+		account = accountService.validate(aid);
+	} catch (ResourceNotFoundException e) {
+		dto.setMsg(e.getMessage());
+		return ResponseEntity.badRequest().body(dto);
+	}
+	
+	
+	card.setBalance(account.getBalance());
+	card.setExpiryDate(LocalDate.now().plusYears(5));
+	card.setCardType(cardDet.getCardType());
+	card.setStatus("Approved");
+	card.setAccount(account);
+
+	card = cardService.insert(card);
+	return ResponseEntity.ok(account);	
+	
+	
+	
+		
+	}
+	
+	
+	@GetMapping("/customer/account/card/detail/{aid}")
+	public ResponseEntity<?> getCardDetails(@PathVariable int aid,ResponseMessageDto dto) {
+		
+		try {
+			accountService.validate(aid);
+		} catch (ResourceNotFoundException e) {
+			dto.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(dto);
+		}
+		
+		List<Card> list = cardService.getCardDetails(aid);
 		return ResponseEntity.ok(list);
 		
 	}

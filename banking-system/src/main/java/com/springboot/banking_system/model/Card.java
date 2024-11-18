@@ -2,8 +2,12 @@ package com.springboot.banking_system.model;
 
 import java.time.LocalDate;
 
+import com.springboot.banking_system.enums.CardType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,8 +15,7 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Card {
-	@ManyToOne
-	private Account account;
+	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,18 +24,34 @@ public class Card {
 	@Column(unique = true, nullable = false)
 	private String cardNumber;
 	
+	@Enumerated(EnumType.STRING)
+	private CardType cardType;
+	
+	
+
 	@Column(nullable = false)
-	private String status = "Approved";
+	private String status = "Not Approved";
 	
 	@Column(nullable = false)
     private LocalDate expiryDate;
 	
 	@Column(nullable = false)
-	private int cvv;
+	private String cvv;
 	
 	@Column(nullable = false)
 	private double balance;
+	
+	@ManyToOne
+	private Account account;
 
+	public CardType getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(CardType cardType) {
+		this.cardType = cardType;
+	}
+	
 	public Account getAccount() {
 		return account;
 	}
@@ -73,11 +92,11 @@ public class Card {
 		this.expiryDate = expiryDate;
 	}
 
-	public int getCvv() {
+	public String getCvv() {
 		return cvv;
 	}
 
-	public void setCvv(int cvv) {
+	public void setCvv(String cvv) {
 		this.cvv = cvv;
 	}
 

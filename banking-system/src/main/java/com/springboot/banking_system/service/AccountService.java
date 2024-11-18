@@ -1,5 +1,7 @@
 package com.springboot.banking_system.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,6 +9,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.banking_system.dto.AccountStatementDto;
+import com.springboot.banking_system.enums.AccountType;
+import com.springboot.banking_system.enums.TransactionType;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Account;
 import com.springboot.banking_system.model.Customer;
@@ -14,6 +19,7 @@ import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.repository.AccountRepository;
 import com.springboot.banking_system.repository.CustomerRepository;
 import com.springboot.banking_system.repository.TransactionRepository;
+
 
 
 @Service
@@ -130,6 +136,7 @@ public Account validateIdAndAmountAndBalance(int aid,double amount,String reaccn
    public List<Transaction> getTransactionHistory(int aid) {
 	return transactionRepository.getTransactionHistory(aid);
   }
+
 
 
 }
