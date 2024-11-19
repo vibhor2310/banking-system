@@ -1,5 +1,5 @@
 package com.springboot.banking_system.enums;
 
-public enum Type {
+public enum InvestmentType {
 	FIXEDDEPOSITS,MUTUALFUNDS,BONDS,STOCKS
 }

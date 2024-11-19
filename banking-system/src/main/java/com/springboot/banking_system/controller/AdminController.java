@@ -13,13 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.banking_system.dto.ResponseMessageDto;
+import com.springboot.banking_system.enums.InvestmentStatus;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Admin;
 import com.springboot.banking_system.model.Customer;
+import com.springboot.banking_system.model.Investment;
 import com.springboot.banking_system.model.Loan;
 import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.service.AdminService;
 import com.springboot.banking_system.service.CustomerService;
+import com.springboot.banking_system.service.InvestmentService;
 import com.springboot.banking_system.service.LoanService;
 import com.springboot.banking_system.service.TransactionService;
 
@@ -38,6 +41,9 @@ public class AdminController {
 	
 	@Autowired
 	private LoanService loanService;
+	
+	@Autowired
+	private InvestmentService investmentService;
 	
 	@PostMapping("/admin/add")
 	public void addAdmin(@RequestBody Admin admin) {
@@ -123,4 +129,28 @@ public class AdminController {
 		loanService.insertNewRate(newInterestRate);
 		
 	}
+	
+	@GetMapping("admin/showinvestments")
+	public List<Investment> showAllInvestments(){
+		List<Investment> list = investmentService.showAllInvestments();
+		return list;
+	}
+	
+//	@PutMapping("admin/investmentUpdate/{id}/{status}")
+//	public ResponseEntity<ResponseMessageDto> updateInvestmentStatus(@PathVariable int id,
+//			@PathVariable InvestmentStatus investmentStatus,
+//			ResponseMessageDto dto) {
+//		try {
+//		investmentService.validate(id);
+//		investmentService.updateInvestmentStatus(id,investmentStatus);
+//		}catch(ResourceNotFoundException e) {
+//			dto.setMsg(e.getMessage());
+//			return ResponseEntity.badRequest().body(dto);
+//		}
+//		dto.setMsg("investment updated");
+//		return ResponseEntity.ok(dto);
+//	}
+	
+
+	
 }
