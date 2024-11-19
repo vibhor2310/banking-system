@@ -48,5 +48,8 @@ public class CustomerService {
 		return customerRepository.getCustomerDetail(id);
 	}
 
+	public List<Customer>showAllCustomers(){
+		return customerRepository.findAll();
+		}
 
 }

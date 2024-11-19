@@ -1,5 +1,7 @@
 package com.springboot.banking_system.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +69,22 @@ public class TransactionService {
 		
 		return transactionRepository.save(transaction);
 	}
-	
+
+	public List<Transaction> showAllTransaction() {
+		List<Transaction> list = transactionRepository.findAll();
+		return list;
+	}
+
+	public List<Transaction> showWithdraw() {
+		List<Transaction> list = transactionRepository.findByTransactionType(TransactionType.WITHDRAW);
+		return list;
+	}
+
+//	public List<Transaction> showWithdraw() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//	
 	
 
 }
