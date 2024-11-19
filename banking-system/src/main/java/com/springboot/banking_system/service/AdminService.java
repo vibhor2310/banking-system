@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Admin;
+import com.springboot.banking_system.model.Customer;
 import com.springboot.banking_system.repository.AccountRepository;
 import com.springboot.banking_system.repository.AdminRepository;
 import com.springboot.banking_system.repository.CustomerRepository;
@@ -46,6 +47,8 @@ public class AdminService {
 		// TODO Auto-generated method stub
 		 return adminRepository.saveAll(list);
 	}
+
+	
 	
 	
 }

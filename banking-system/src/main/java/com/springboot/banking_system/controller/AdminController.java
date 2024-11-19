@@ -15,7 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.springboot.banking_system.dto.ResponseMessageDto;
 import com.springboot.banking_system.exception.ResourceNotFoundException;
 import com.springboot.banking_system.model.Admin;
+import com.springboot.banking_system.model.Customer;
+import com.springboot.banking_system.model.Loan;
+import com.springboot.banking_system.model.Transaction;
 import com.springboot.banking_system.service.AdminService;
+import com.springboot.banking_system.service.CustomerService;
+import com.springboot.banking_system.service.LoanService;
+import com.springboot.banking_system.service.TransactionService;
 
 @RestController
 public class AdminController {
@@ -24,7 +30,14 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 	
-
+	@Autowired
+	private CustomerService customerService;
+	
+	@Autowired
+	private TransactionService transactionService;
+	
+	@Autowired
+	private LoanService loanService;
 	
 	@PostMapping("/admin/add")
 	public void addAdmin(@RequestBody Admin admin) {
@@ -78,5 +91,36 @@ public class AdminController {
 		dto.setMsg(e.getMessage());
 		return ResponseEntity.badRequest().body(dto);
 	}
+	}
+	
+	@GetMapping("admin/cutomers/all")
+	public List<Customer> getAllCustomers(){
+		List<Customer> list = customerService.showAllCustomers();
+		return list;
+	}
+	
+	@GetMapping("admin/alltransaction")
+	public List<Transaction> getTransactions() {
+		List<Transaction> list = transactionService.showAllTransaction();
+		return list;
+	}
+	
+	@GetMapping("admin/withdrawTrasaction")
+	public List<Transaction> showWithdraw(){
+	List<Transaction> list = transactionService.showWithdraw();
+	return list;
+	}
+	
+	@GetMapping("admin/showLoans")
+	public List<Loan> showLoans()
+	{
+		List<Loan> list = loanService.showAll();
+		return list;
+	}
+	
+	@PutMapping("admin/updateLoan/{newInterestRate}")
+	public void updateLoanInterestRate(@PathVariable double newInterestRate) {
+		loanService.insertNewRate(newInterestRate);
+		
 	}
 }

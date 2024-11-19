@@ -24,6 +24,16 @@ public class LoanService {
 		return loanRepository.getLoanDetails(aid);
 	}
 
+	public List<Loan> showAll() {
+		// TODO Auto-generated method stub
+		return loanRepository.findAll();
+	}
+
+	public void insertNewRate(double newInterestRate) {
+		loanRepository.updateNewRate(newInterestRate);
+		
+	}
+
 	
 
 }

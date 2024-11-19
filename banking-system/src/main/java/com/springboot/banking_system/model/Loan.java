@@ -31,6 +31,8 @@ public class Loan {
    private LocalDate dateCreated= LocalDate.now();
    
    private String status;
+   
+   private double interestRate;
 	
 	@ManyToOne
 	private Account account;
@@ -89,6 +91,14 @@ public class Loan {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public double getInterestRate() {
+		return interestRate;
+	}
+
+	public void setInterestRate(double interestRate) {
+		this.interestRate = interestRate;
 	}
 	
 	

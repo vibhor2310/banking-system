@@ -20,7 +20,6 @@ public class Admin {
 	@Column(nullable =false)
 	private String middle_name;
 
-	
 	@Column(nullable =false)
 	private String last_name;
 	
